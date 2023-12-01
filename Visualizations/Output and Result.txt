@@ -1,0 +1,51 @@
+Index(['ORDERNUMBER', 'QUANTITYORDERED', 'PRICEEACH', 'ORDERLINENUMBER',
+       'SALES', 'ORDERDATE', 'STATUS', 'QTR_ID', 'MONTH_ID', 'YEAR_ID',
+       'PRODUCTLINE', 'MSRP', 'PRODUCTCODE', 'CUSTOMERNAME', 'PHONE',
+       'ADDRESSLINE1', 'ADDRESSLINE2', 'CITY', 'STATE', 'POSTALCODE',
+       'COUNTRY', 'TERRITORY', 'CONTACTLASTNAME', 'CONTACTFIRSTNAME',
+       'DEALSIZE'],
+      dtype='object')
+
+ORDERNUMBER            0
+QUANTITYORDERED        0
+PRICEEACH              0
+ORDERLINENUMBER        0
+SALES                  0
+ORDERDATE              0
+STATUS                 0
+QTR_ID                 0
+MONTH_ID               0
+YEAR_ID                0
+PRODUCTLINE            0
+MSRP                   0
+PRODUCTCODE            0
+CUSTOMERNAME           0
+PHONE                  0
+ADDRESSLINE1           0
+ADDRESSLINE2        2521
+CITY                   0
+STATE               1486
+POSTALCODE            76
+COUNTRY                0
+TERRITORY           1074
+CONTACTLASTNAME        0
+CONTACTFIRSTNAME       0
+DEALSIZE               0
+
+dtype: int64
+
+True
+
+['USA' 'Canada']
+
+RESULT
+
+Sales are increased from 2003 to 2004. Sales at 2005 is least but it doesn't contain whole year data.
+2005 sales for the first 5 months are higher than previous years except for April. The monthly sales trends at peaked on November.
+There is no relationship between discount rates and sales.
+The most of sales are happened at USA. Spain and France are the second and third most sold countries.
+The most of sales are happened at EMEA region. The NAM region which USA is in it is the second most sold region.
+Small sales are sales between 0 and 3000. Medium sales are sales between 3000 and 7000. Large sales are the sales higher than 7000.
+The most of the sales are belong Classic Cars category. Vintage Cars and Motorcycles are the second and third ones. The least of sales are happened in Trains category.
+The monthly active users show similar trend to sales. The active users are peaked at most sold months.
+
