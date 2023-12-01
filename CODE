@@ -1,0 +1,164 @@
+# Importing Packages
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import r2_score
+
+file_path = '/content/sample_data/sales_data_sample.csv'
+
+df= pd.read_csv(file_path, encoding='latin1', engine='python', error_bad_lines=False)
+
+#df.info()
+df.sort_values(by=['ORDERNUMBER'], inplace=True)
+
+#df.columns.values
+print(df.columns)
+
+df.describe()
+
+# Checking null values
+print(df.isnull().sum())
+# Checking duplicate values
+print(len(df) == len(df.drop_duplicates()))
+
+# Determining Countries with null valued Territory
+Countries_null_Territory = df.loc[df['TERRITORY'].isnull(), 'COUNTRY'].unique()
+print(Countries_null_Territory)
+# Assigning North America Territory values
+df['TERRITORY'] = df['TERRITORY'].fillna('NAM')
+df['TERRITORY'].unique()
+
+# Removing the In Process and Cancelled orders
+df['STATUS'].unique()
+
+sales1 = df[~((df['STATUS'] == 'Cancelled') | (df['STATUS'] == 'On Hold'))]
+sales1['STATUS'].unique()
+
+# Sales Distribution
+plt.figure(figsize=(20,10))
+sns.distplot(x = sales1['SALES'])
+plt.axvline(x = np.mean(sales1['SALES']), c = 'red', ls = '--', label = 'mean')
+plt.axvline(x = np.percentile(sales1['SALES'], 25), c = 'green', ls = '--', label = '25-75th percentile')
+plt.axvline(x = np.percentile(sales1['SALES'], 75), c = 'green', ls = '--')
+plt.xticks(np.arange(0,14000,500))
+plt.legend()
+plt.show()
+
+#Sales distribution is right skewed. Most of the sales are between 2000-2500. Mean sale is around 3500.
+sales1.hist(figsize = (10,10))
+plt.show()
+
+# Annual Revenue
+plt.figure(figsize=(15,12))
+
+df1 = sales1.groupby('YEAR_ID').agg({'SALES':'sum'}).rename(columns={'SALES':'Revenue'})
+df1.reset_index(inplace=True)
+plt.bar(df1['YEAR_ID'],df1['Revenue'], width = 0.8)
+
+plt.title('Annual Revenue', fontsize = 20)
+plt.xlabel('Year', fontsize = 16)
+plt.ylabel('Revenue', fontsize = 16)
+plt.show()
+
+#Sales are increased from 2003 to 2004. Sales at 2005 is least but it doesn't contain whole year data.
+
+# Monthly Revenue
+plt.figure(figsize=(15,12))
+
+monthly_revenue = sales1.groupby(['YEAR_ID','MONTH_ID'])['SALES'].sum().reset_index()
+
+sns.lineplot(x="MONTH_ID", y="SALES",hue="YEAR_ID", data=monthly_revenue)
+plt.title('Monthly Revenue', fontsize = 20)
+plt.xlabel('Month', fontsize = 16)
+plt.ylabel('Sales', fontsize = 16)
+
+plt.show()
+
+#2005 sales for the first 5 months are higher than previous years except for April. The monthly sales trends at peaked on November.
+
+# Discount Rate
+sales1['discountrate'] = ((sales1['MSRP']-sales1['PRICEEACH'])/sales1['MSRP'])*100
+sales1[['PRICEEACH','MSRP','discountrate']]
+
+# Discount Rates and Sales Relation
+plt.figure(figsize=(20,10))
+sns.regplot(x = sales1['SALES'], y = sales1['discountrate'])
+plt.title('Discount Rates and Sales Relation', fontsize = 20)
+plt.ylabel('Discountrate', fontsize = 16)
+plt.xlabel('Sales', fontsize = 16)
+
+
+x = sales1['SALES']
+y = sales1['discountrate']
+z = np.polyfit(x, y, 1)
+p = np.poly1d(z)
+
+text = f"$y={z[0]:0.3f}\;x{z[1]:+0.3f}$\n$R^2 = {r2_score(y,p(x)):0.3f}$"
+plt.gca().text(0.05, 0.05, text, fontsize=14, verticalalignment='top')
+plt.show()
+
+#There is no relationship between discount rates and sales.
+
+# Number of Sale Lines for Countries
+
+plt.figure(figsize=(30,10))
+sns.countplot(x = sales1['COUNTRY'], order = sales1['COUNTRY'].value_counts().index )
+plt.title('Number of Sale Lines for Countries', fontsize = 20)
+plt.ylabel('Number of Orderlines', fontsize = 16)
+plt.xlabel('Countries', fontsize = 16)
+plt.show()
+
+#The most of sales are happened at USA. Spain and France are the second and third most sold countries.
+
+# Number of Sale Lines for Regions
+plt.figure(figsize=(20,10))
+sns.countplot(x = sales1['TERRITORY'], order = sales1['TERRITORY'].value_counts().index )
+plt.title('Number of Sale Lines for Regions', fontsize = 20)
+plt.ylabel('Number of Orderlines', fontsize = 16)
+plt.xlabel('Regions', fontsize = 16)
+plt.show()
+
+#The most of sales are happened at EMEA region. The NAM region which USA is in it is the second most sold region.
+
+# Sales Distribution for Dealsizes
+plt.figure(figsize=(20,10))
+plt.yticks(np.arange(0,14000,1000))
+sns.boxplot(x = sales1['DEALSIZE'], y = sales1['SALES'])
+plt.title('Sales Distribution for Deal Sizes', fontsize = 20)
+plt.ylabel('Sales', fontsize = 16)
+plt.xlabel('Deal Size', fontsize = 16)
+plt.show()
+
+#Small sales are sales between 0 and 3000. Medium sales are sales between 3000 and 7000. Large sales are the sales higher than 7000.
+
+# Number of Sale Lines for Deal Size
+plt.figure(figsize=(20,10))
+sns.countplot(x = sales1['DEALSIZE'], order = sales1['DEALSIZE'].value_counts().index )
+plt.title('Number of Sale Lines for Deal Sizes', fontsize = 20)
+plt.ylabel('Number of Orderlines')
+plt.xlabel('Deal Size')
+plt.show()
+
+plt.figure(figsize=(15,12))
+sales1['PRODUCTLINE'].value_counts().plot(kind = 'bar')
+plt.title('Product Line Distribution')
+plt.xlabel('Product Line')
+plt.ylabel('Number of Orderlines')
+plt.show()
+
+#The most of the sales are belong Classic Cars category. Vintage Cars and Motorcycles are the second and third ones.
+#The least of sales are happened in Trains category.
+
+# Monthly Active Users
+sales1['year_month'] = sales1['YEAR_ID'].map(str)+sales1['MONTH_ID'].map(str).map(lambda x: x.rjust(2,'0'))
+
+plt.figure(figsize=(10,6))
+sales1.groupby(['year_month'])['CUSTOMERNAME'].nunique().plot(kind='bar')
+plt.title('Monthly Active Users')
+plt.xlabel('YearMonth')
+plt.ylabel('Active Users')
+plt.show()
+
+#The monthly active users show similar trend to sales. The active users are peaked at most sold months.
