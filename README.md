@@ -1,6 +1,5 @@
 # Sales-Data-Analysis
 This repository presents an exploratory data analysis (EDA) on sales data spanning from 2003 to 2005. The analysis dives into various facets such as sales distribution, yearly and monthly revenues, discount rates, sales relationships, geographical insights, deal sizes, and monthly active users.
-This repository hosts an in-depth exploration of sales data spanning the years 2003 to 2005. The analysis encompasses a wide array of topics, including sales distribution, yearly and monthly revenues, discount rates, sales relationships, geographical insights, deal sizes, and monthly active user trends.
 
 ## Key Features
 - **Comprehensive Dataset:** The dataset includes 25 columns capturing crucial sales details, offering a rich source for analysis.
